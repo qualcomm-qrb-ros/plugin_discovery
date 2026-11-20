@@ -1,0 +1,9 @@
+#!/bin/sh
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+set -e
+# The candidate is gone: drop the link that pointed to it, and relink whatever else matches.
+case "$1" in
+  remove|purge) [ -x /usr/bin/platform-detect ] && /usr/bin/platform-detect --force || true ;;
+esac
+exit 0

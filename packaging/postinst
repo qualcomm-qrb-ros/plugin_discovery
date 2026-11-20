@@ -1,0 +1,10 @@
+#!/bin/sh
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+set -e
+# platform-detect ran once at the first boot, before this candidate existed: refresh the
+# links it made so the new candidate is picked up. Links it did not make are left alone.
+if [ "$1" = configure ] && [ -x /usr/bin/platform-detect ]; then
+  /usr/bin/platform-detect --force || true
+fi
+exit 0

@@ -1,115 +1,33 @@
-<div align="center">
-  <h1>${Package Name}</h1>
-  <p align="center">
-    ${Primary Picture} <!-- Add images or videos to showcase your project demo, use case, or logo -->
-  </p>
-  <p>${One sentence to describe your package}</p>
-  
-  <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
-  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
-  
-</div>
+# plugin_discovery platform configuration
 
----
+**English** | [中文](README.zh-CN.md)
 
-## 👋 Overview
+The platform-tier configuration of [plugin_discovery](https://github.com/qualcomm-qrb-ros/plugin_discovery): for every machine, OS type and domain, which backends Qualcomm fully supports. It lives on the `platform-config` branch, apart from the library, so that it can change and be released without touching the library.
 
-> 📌 **Introduction to the project**
-> - Highlight key features
-> - Important information
+## Layout
 
-> 📌 **Architecture diagrams**
-> - The high-level architecture with layers, components and relationship
+```
+<domain>/<machine>-<os>-<domain>.config.yaml     e.g. camera/QAM8797P-QCLinux-camera.config.yaml
+```
 
-> 📌 **Describe the architecture diagram:**
-> - Functions of each module
-> - Relationships between modules
-> - Any other information to help users easily understand the diagram
-> - ❗ Module names should not use internal or private terms; please use community-friendly terminology
+- `<machine>`: the string in `/sys/devices/soc0/machine`. `<os>`: `Ubuntu` or `QCLinux`. Names are compared ignoring case.
+- The domain in the name must be the directory it is in, and the file must hold that domain's block. The build fails otherwise.
+- Each domain's directory belongs to that domain's team (see `.github/CODEOWNERS`): they add machines and change their backend lists through pull requests.
 
-## 🔎 Table of Contents (Optional)
+## Package
 
-> 📌 If the content is extensive, we recommend adding a table of contents.
+One Debian package, `plugin-discovery-platform-config` (architecture `all`), installs every file into `/usr/share/plugin_discovery/platforms.d/`. On the first boot `platform-detect` links the ones that match the machine and OS into `/etc/plugin_discovery/platform.d/`; the package's postinst and postrm run `platform-detect --force` so that installing or removing it refreshes the links.
 
-  * [APIs](#-apis)
-  * [Supported Targets](#-supported-targets)
-  * [Installation](#-installation)
-  * [Usage](#-usage)
-  * [Build from Source](#-build-from-source)
-  * [Contributing](#-contributing)
-  * [Contributors](#%EF%B8%8F-contributors-optional)
-  * [FAQs](#-faqs-optional)
-  * [License](#-license)
+```bash
+cmake -S . -B build && cd build && cpack -G DEB      # plugin-discovery-platform-config_<version>_all.deb
+sudo dpkg -i plugin-discovery-platform-config_*_all.deb
+pluginlib-detect -d camera                           # the merged result
+```
 
-## ⚓ APIs
+**Qualcomm Linux** has a read-only root file system and an image is built for one machine, so it does not use this package or `platform-detect`: the image recipe installs the candidate of its machine directly as `/etc/plugin_discovery/platform.d/<domain>.config.yaml`. That recipe lives in the image layer (`meta-qcom-robotics-sdk`), not here.
 
-> 📌 Include the APIs for all your packages, such as ROS APIs or C++/Python library APIs.
+Customer configuration is not part of this package: it goes to `/etc/plugin_discovery/config.d/` from the customer's own package.
 
-### 🔹 ${ROS Package} APIs
+## License
 
-#### ROS Interfaces
-
-> 📌 List the ROS interfaces:
-> - Which topics are subscribed/published? What are the message types?
-> - Service and action information
-
-#### ROS Parameters
-
-> 📌 List ROS parameters:
-> - Parameter name, type, description, and default value
-
-### 🔹 ${Non-ROS Package} APIs
-
-> 📌 List non-ROS package APIs, such as C++ libraries:
-> - Only public functions, including parameters and descriptions
-
-## 🎯 Supported Targets
-
-> 📌 List the supported hardware/targets for this project:
-> - If your package depends on specific hardware, list them
-> - ❗ Hardware and target information should be public and accessible
-
----
-
-## ✨ Installation
-
-> 📌 Instructions for installation in Ubuntu:
-> - We do not provide steps for QCLinux, but please add a link for developers if needed
-> - Include steps for adding Debian PPA or other environment settings if required
-
-## 🚀 Usage
-
-> 📌 How to use this package:
-> - What happens when commands are run?
-> - How to check if the result is as expected?
-> - How to configure advanced features
-
----
-
-## 👨‍💻 Build from Source
-
-> 📌 How to build this package locally:
-> - Assume developers are using Ubuntu with ROS installed
-> - Step-by-step guide to install dependencies, download source code, build the project, and verify your build
-
-## 🤝 Contributing
-
-We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).  
-Feel free to create an issue for bug reports, feature requests, or any discussion 💡.
-
-## ❤️ Contributors (Optional)
-
-> 📌 List the contributors to this project
-
-## ❔ FAQs (Optional)
-
-> 📌 Include common and popular questions and answers
-
-<details>
-<summary>${Question}</summary><br>
-${The answer and reasoning}
-</details>
-
-## 📜 License
-
-> 📌 Add license declaration and a link to the license file
+BSD-3-Clause-Clear, see [`LICENSE`](LICENSE).

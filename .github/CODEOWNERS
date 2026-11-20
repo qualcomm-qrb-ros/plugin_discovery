@@ -1,0 +1,6 @@
+# Each domain's directory is owned by that domain's team; the build files by the package owner.
+# Replace the placeholders with real GitHub users or teams.
+# /camera/          @<camera-team>
+# /audio/           @<audio-team>
+# /CMakeLists.txt   @<package-owner>
+# /packaging/       @<package-owner>

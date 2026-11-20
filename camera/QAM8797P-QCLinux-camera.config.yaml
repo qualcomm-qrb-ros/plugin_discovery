@@ -1,0 +1,13 @@
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+# Platform configuration for QAM8797P (IQ10) running Qualcomm Linux: which camera backends to load.
+#
+# A candidate. On Qualcomm Linux the image recipe installs it as
+# /etc/plugin_discovery/platform.d/camera.config.yaml when the image is built; on Ubuntu
+# platform-detect links it there when /sys/devices/soc0/machine and the OS type match.
+# The first entry is the default backend;
+# the others load too and serve their own cameras in the same process.
+
+domains:
+  camera:
+    backends: [qcarcam]
