@@ -1,0 +1,14 @@
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+# Platform configuration for IQ10 (machine QAM8797P) running Ubuntu: which camera backends to load.
+#
+# A candidate: platform-detect links it to /etc/plugin_discovery/platform.d/camera.config.yaml
+# when /sys/devices/soc0/machine is QAM8797P (case-insensitive) and the OS is Ubuntu.
+# The first entry is the default backend. Only backend names (the `backend:` of the manifests)
+# belong here; camera ids, resolutions and calibration are parameters of qrb_ros_camera.
+#
+# QAM8797P confirmed on an IQ10 board (cat /sys/devices/soc0/machine, 2026-11-22).
+
+domains:
+  camera:
+    backends: [qcarcam]
